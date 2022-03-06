@@ -1,5 +1,6 @@
 package com.louis.restaurantreview
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +30,34 @@ class MainActivity : AppCompatActivity() {
         binding.rvReview.addItemDecoration(itemDecoration)
 
         findRestaurant()
+
+        binding.btnSend.setOnClickListener { view ->
+            postReview(binding.edReview.text.toString())
+        }
+    }
+
+    private fun postReview(review: String) {
+        showLoading(true)
+        val client = ApiConfig.getApiService().postReview(RESTAURANT_ID,"Dicoding", review)
+        client.enqueue(object : Callback<PostReviewResponse> {
+            override fun onResponse(
+                call: Call<PostReviewResponse>,
+                response: Response<PostReviewResponse>
+            ) {
+                showLoading(false)
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    setReviewData(responseBody.customerReviews)
+                } else {
+                    Log.e(TAG, "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PostReviewResponse>, t: Throwable) {
+                showLoading(false)
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
     }
 
     private fun findRestaurant() {
