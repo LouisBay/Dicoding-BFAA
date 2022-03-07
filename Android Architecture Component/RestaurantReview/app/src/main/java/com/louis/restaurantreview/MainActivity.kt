@@ -10,19 +10,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.louis.restaurantreview.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var activityMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(activityMainBinding.root)
 
         supportActionBar?.hide()
 
@@ -32,9 +30,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val layoutManager = LinearLayoutManager(this)
-        binding.rvReview.layoutManager = layoutManager
+        activityMainBinding.rvReview.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
-        binding.rvReview.addItemDecoration(itemDecoration)
+        activityMainBinding.rvReview.addItemDecoration(itemDecoration)
 
         mainViewModel.listReview.observe(this) { consumerReviews ->
             setReviewData(consumerReviews)
@@ -44,8 +42,18 @@ class MainActivity : AppCompatActivity() {
             showLoading(it)
         }
 
-        binding.btnSend.setOnClickListener { view ->
-            mainViewModel.postReview(binding.edReview.text.toString())
+        mainViewModel.snackbarText.observe(this) {
+            it.getContentIfNotHandled()?.let { snackBarText ->
+                Snackbar.make(
+                    window.decorView.rootView,
+                    snackBarText,
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        activityMainBinding.btnSend.setOnClickListener { view ->
+            mainViewModel.postReview(activityMainBinding.edReview.text.toString())
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken,0)
         }
@@ -56,12 +64,12 @@ class MainActivity : AppCompatActivity() {
             "${it.review}\n- ${it.name}"
         }
         val adapter = ReviewAdapter(listReview)
-        binding.rvReview.adapter = adapter
-        binding.edReview.setText("")
+        activityMainBinding.rvReview.adapter = adapter
+        activityMainBinding.edReview.setText("")
     }
 
     private fun setRestaurantData(restaurant: Restaurant) {
-        with(binding) {
+        with(activityMainBinding) {
             tvTitle.text = restaurant.name
             tvDescription.text = restaurant.description
             Glide.with(this@MainActivity)
@@ -71,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        activityMainBinding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     companion object {
