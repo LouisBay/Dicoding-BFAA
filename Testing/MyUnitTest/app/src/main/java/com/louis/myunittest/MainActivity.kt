@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val length = activityMainBinding.edtLength.text.toString().trim()
         val width = activityMainBinding.edtWidth.text.toString().trim()
-        val height = activityMainBinding.edtHeight.toString().trim()
+        val height = activityMainBinding.edtHeight.text.toString().trim()
 
         when {
             TextUtils.isEmpty(length) -> {
@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             btnCalculateSurfaceArea.visibility = View.GONE
             btnSave.visibility = View.VISIBLE
         }
-
     }
 
 }
