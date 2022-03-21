@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     // aksi untuk onClick pada button
     fun sendNotification(view: View) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://dicoding.com"))
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
